@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch as JSON</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-8">
+
+    <div class="max-w-4xl mx-auto p-6 rounded-lg shadow-md">
+        <div>
+            <label for="url-input" class="block text-sm font-medium text-gray-700">URL to Fetch</label>
+            <input type="text" id="url-input"
+                   value="https://api.github.com/users/jackolake"
+                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <button id="button" class="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition">
+            Fetch Content
+        </button>
+
+        <div class="mt-6">
+            <h2 class="text-lg font-semibold mb-2 text-gray-800 uppercase tracking-wide border-b pb-1">Response:</h2>
+            <div id="text-box" class="bg-gray-50 p-4 rounded-md border border-gray-200 text-sm overflow-x-auto min-h-[100px] text-gray-700">Click the button to see the content...</div>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.querySelector('#url-input')
+        const button = document.querySelector('#button')
+        const textBox = document.querySelector('#text-box')
+
+        function loadData() {
+            const url = urlInput.value
+            textBox.innerText = "Loading..."
+            fetch(url)
+                .then(response => {
+                    // Get the JSON from the response
+                    return response.json();
+                })
+                .then(data => {
+                    // Load a field from the object
+                    textBox.innerText = `Created: ${data['created_at']}`
+                })
+                .catch(error => {
+                    textBox.innerText = "Error: " + error.message
+                })
+        }
+        button.addEventListener('click', loadData)
+    </script>
+</body>
+</html>

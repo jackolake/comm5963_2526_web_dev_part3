@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Trivia - Step 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-900">
+
+    <div id="game-container" class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md transition-all duration-300">
+        <div class="flex flex-col items-center mb-6">
+            <div class="text-6xl mb-3">🧠✨</div>
+            <h1 class="text-3xl font-extrabold text-indigo-700">Fun Trivia</h1>
+        </div>
+        
+        <div id="trivia-area">
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="question-count" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Question 1</span>
+                </div>
+                <div id="status-bar" class="flex flex-wrap gap-2 text-xs font-bold justify-center py-2 bg-gray-50 rounded-lg min-h-[2.5rem] items-center">
+                    <!-- Results will be appended here (e.g., "Q1: Correct") -->
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <p id="question-text" class="text-lg font-medium leading-relaxed min-h-[5rem]"></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button id="true-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md transform hover:-translate-y-1">
+                    True
+                </button>
+                <button id="false-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md transform hover:-translate-y-1">
+                    False
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const statusBar = document.querySelector('#status-bar')
+        const questionText = document.querySelector('#question-text')
+        const trueBtn = document.querySelector('#true-btn')
+        const falseBtn = document.querySelector('#false-btn')
+
+        const triviaQuestion = {
+            'question': 'Is the sky blue?',
+            'correct_answer': 'True'
+        }
+        // Initialize question text
+        questionText['innerText'] = triviaQuestion['question']
+
+        function handleButtonClick(event) {
+            let playerAnswer
+            if (event.currentTarget['id'] === 'true-btn') {
+                playerAnswer = 'True'
+            } else {
+                playerAnswer = 'False'
+            }
+            const status = document.createElement('div')
+            status['classList'].add('p-2')
+            if (playerAnswer === triviaQuestion['correct_answer']) {
+                status['classList'].add('bg-emerald-100')
+                status['innerText'] = "Q1: Correct"
+            } else {
+                status['classList'].add('bg-rose-100')
+                status['innerText'] = "Q1: Wrong"
+            }
+            statusBar.append(status)
+        }
+        trueBtn.addEventListener('click', handleButtonClick)
+        falseBtn.addEventListener('click', handleButtonClick)
+    </script>
+</body>
+</html>

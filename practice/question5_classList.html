@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Trivia - Step 5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-900">
+
+    <div id="game-container" class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md transition-all duration-300">
+        <div class="flex flex-col items-center mb-6">
+            <div class="text-6xl mb-3">🧠✨</div>
+            <h1 class="text-3xl font-extrabold text-indigo-700">Fun Trivia</h1>
+        </div>
+        
+        <!-- Main Menu -->
+        <div id="main-menu" class="text-center">
+            <p class="text-gray-600 mb-8">Test your knowledge with Fun Trivia!</p>
+            <button id="start-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition-colors shadow-md">
+                Start Game
+            </button>
+        </div>
+
+        <div id="status-area" class="hidden mb-4">
+            <div id="status-bar" class="flex flex-wrap gap-2 text-xs font-bold justify-center py-2 bg-gray-50 rounded-lg min-h-[2.5rem] items-center">
+                <!-- Results will be appended here (e.g., "1: Correct") -->
+            </div>
+        </div>
+
+        <!-- Trivia Area (Hidden initially) -->
+        <div id="trivia-area" class="hidden">
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="question-count" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Question 1 of 3</span>
+                    <span id="score-display" class="text-sm font-bold text-indigo-600">Score: 0</span>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <p id="question-text" class="text-lg font-medium leading-relaxed min-h-[5rem]"></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button id="true-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md transform hover:-translate-y-1">
+                    True
+                </button>
+                <button id="false-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md transform hover:-translate-y-1">
+                    False
+                </button>
+            </div>
+        </div>
+
+        <div id="result-area" class="hidden text-center">
+            <p id="final-score" class="text-xl mb-6"></p>
+        </div>
+    </div>
+
+    <script>
+        const mainMenu = document.querySelector('#main-menu')
+        const triviaArea = document.querySelector('#trivia-area')
+        const resultArea = document.querySelector('#result-area')
+        const startBtn = document.querySelector('#start-btn')
+        const trueBtn = document.querySelector('#true-btn')
+        const falseBtn = document.querySelector('#false-btn')
+        const questionText = document.querySelector('#question-text')
+        const questionCount = document.querySelector('#question-count')
+        const scoreDisplay = document.querySelector('#score-display')
+        const statusArea = document.querySelector('#status-area')
+        const statusBar = document.querySelector('#status-bar')
+        const finalScore = document.querySelector('#final-score')
+
+        const questions = [
+            { question: "The area of the Vatican City is under 1km².", correct_answer: "True" },
+            { question: "The Eiffel Tower was originally intended for Barcelona, Spain.", correct_answer: "True" },
+            { question: "A duck's quack doesn't echo.", correct_answer: "False" }
+        ]
+
+        let currentQuestionIndex = 0
+        let score = 0
+
+        function startGame() {
+            // When the game start we do these:
+            // TODO: hide mainMenu
+
+            // TODO: Unhide statusArea
+
+            // TODO: Unhide triviaArea
+
+
+            showQuestion()
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex]
+            questionText['innerText'] = currentQuestion.question
+            questionCount['innerText'] = `Question ${currentQuestionIndex + 1} of ${questions.length}`
+        }
+
+        function updateStatusBar(isCorrect) {
+            const indicator = document.createElement('span')
+            indicator['classList'].add('px-2', 'py-1', 'rounded', 'shadow-sm')
+            if (isCorrect) {
+                indicator['classList'].add('bg-emerald-100', 'text-emerald-700')
+                indicator['innerText'] = `Q${currentQuestionIndex + 1}: Correct`
+            } else {
+                indicator['classList'].add('bg-rose-100', 'text-rose-700')
+                indicator['innerText'] = `Q${currentQuestionIndex + 1}: Wrong`
+            }
+            statusBar.append(indicator)
+        }
+
+        function handleButtonClick(event) {
+            let answer
+            if (event.currentTarget['id'] === 'true-btn') {
+                answer = 'True'
+            } else {
+                answer = 'False'
+            }
+            const currentQuestion = questions[currentQuestionIndex]
+            const isCorrect = answer === currentQuestion.correct_answer
+            if (isCorrect) {
+                score++
+                scoreDisplay['innerText'] = `Score: ${score}`
+            }
+            updateStatusBar(isCorrect)
+
+            currentQuestionIndex++
+            if (currentQuestionIndex < questions.length) {
+                showQuestion()
+            } else {
+                triviaArea['classList'].add('hidden')
+                resultArea['classList'].remove('hidden')
+                finalScore['innerText'] = `You scored ${score} out of ${questions.length}`
+            }
+        }
+
+        startBtn.addEventListener('click', startGame)
+        trueBtn.addEventListener('click', handleButtonClick)
+        falseBtn.addEventListener('click', handleButtonClick)
+    </script>
+</body>
+</html>

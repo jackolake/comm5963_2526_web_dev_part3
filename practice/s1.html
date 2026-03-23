@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Trivia - Step 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-900">
+
+    <div id="game-container" class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md transition-all duration-300">
+        <div class="flex flex-col items-center mb-6">
+            <div class="text-6xl mb-3">🧠✨</div>
+            <h1 class="text-3xl font-extrabold text-indigo-700">Fun Trivia</h1>
+        </div>
+        
+        <div id="trivia-area">
+            <div class="mb-4 text-center">
+                <span id="question-count" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Question 1</span>
+                <div id="status-bar" class="mt-2 text-xs font-bold text-indigo-600 h-6">
+                    <!-- Text will be set here (e.g., "True was clicked") -->
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <p id="question-text" class="text-lg font-medium leading-relaxed min-h-[5rem]">Is the sky blue?</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button id="true-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md transform hover:-translate-y-1">
+                    True
+                </button>
+                <button id="false-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md transform hover:-translate-y-1">
+                    False
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const statusBar = document.querySelector('#status-bar')
+        const trueBtn = document.querySelector('#true-btn')
+        const falseBtn = document.querySelector('#false-btn')
+
+        function handleButtonClick(event) {
+            statusBar['innerText'] = `${event.currentTarget['id']} was clicked`
+        }
+        trueBtn.addEventListener('click', handleButtonClick)
+        falseBtn.addEventListener('click', handleButtonClick)
+    </script>
+</body>
+</html>

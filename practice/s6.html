@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Trivia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-shake {
+            animation: shake 0.2s ease-in-out 3;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-sans text-gray-900">
+
+    <div id="game-container" class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md transition-all duration-300">
+        <div class="flex flex-col items-center mb-6">
+            <div class="text-6xl mb-3">🧠✨</div>
+            <h1 class="text-3xl font-extrabold text-indigo-700">Fun Trivia</h1>
+        </div>
+        
+        <div id="main-menu" class="text-center">
+            <p class="text-gray-600 mb-8">Test your knowledge with Fun Trivia!</p>
+            <button id="start-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition-colors shadow-md">
+                Start Game
+            </button>
+        </div>
+
+        <div id="loading" class="text-center hidden">
+            <p class="text-gray-600 animate-pulse">Fetching questions...</p>
+        </div>
+
+        <div id="status-area" class="mb-4">
+            <div id="status-bar" class="flex flex-wrap gap-2 text-xs font-bold justify-center py-2 bg-gray-50 rounded-lg min-h-[2.5rem] items-center">
+                <!-- Results will be appended here (e.g., "1: Correct") -->
+            </div>
+        </div>
+
+        <div id="trivia-area" class="hidden">
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="question-count" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Question 1 of 3</span>
+                    <span id="score-display" class="text-sm font-bold text-indigo-600">Score: 0</span>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <p id="question-text" class="text-lg font-medium leading-relaxed min-h-[5rem]"></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button id="true-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md transform hover:-translate-y-1">
+                    True
+                </button>
+                <button id="false-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md transform hover:-translate-y-1">
+                    False
+                </button>
+            </div>
+        </div>
+
+        <div id="result-area" class="hidden text-center">
+            <p id="final-score" class="text-xl mb-6"></p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://opentdb.com/api.php?amount=3&difficulty=easy&type=boolean&category=9'
+        
+        const mainMenu = document.querySelector('#main-menu')
+        const startBtn = document.querySelector('#start-btn')
+        const loadingDiv = document.querySelector('#loading')
+        const triviaArea = document.querySelector('#trivia-area')
+        const resultArea = document.querySelector('#result-area')
+        const questionCount = document.querySelector('#question-count')
+        const scoreDisplay = document.querySelector('#score-display')
+        const statusArea = document.querySelector('#status-area')
+        const statusBar = document.querySelector('#status-bar')
+        const questionText = document.querySelector('#question-text')
+        const trueBtn = document.querySelector('#true-btn')
+        const falseBtn = document.querySelector('#false-btn')
+        const finalScore = document.querySelector('#final-score')
+
+        let questions = []
+        let currentQuestionIndex = 0
+        let score = 0
+
+        // Fetch questions from API
+        function fetchQuestions() {
+            mainMenu['classList'].add('hidden')
+            loadingDiv['classList'].remove('hidden')
+            triviaArea['classList'].add('hidden')
+            resultArea['classList'].add('hidden')
+            statusArea['classList'].add('hidden')
+            
+            // Reset loading state text
+            loadingDiv.replaceChildren()
+            const loadingText = document.createElement('p')
+            loadingText['classList'].add('text-gray-600', 'animate-pulse')
+            loadingText['innerText'] = 'Fetching questions...'
+            loadingDiv.append(loadingText)
+
+            currentQuestionIndex = 0
+            score = 0
+            resetStatusBar()
+
+            fetch(API_URL)
+                .then(response => {
+                    return response.json()
+                })
+                .then(data => {
+                    // Update the question bank
+                    questions = data['results']
+                    // Start the game
+                    startGame()
+                })
+                .catch(error => {
+                    const errorMsg = document.createElement('p')
+                    errorMsg['classList'].add('text-red-500')
+                    errorMsg['innerText'] = `Error: ${error.message}. Please try again later.`
+                    loadingDiv.replaceChildren(errorMsg)
+                })
+        }
+
+        function startGame() {
+            loadingDiv['classList'].add('hidden')
+            statusArea['classList'].remove('hidden')
+            triviaArea['classList'].remove('hidden')
+            updateScore()
+            showQuestion()
+        }
+
+        function decodeHTMLEntities(text) {
+            const parser = new DOMParser()
+            const decodedString = parser.parseFromString(text, 'text/html').body['innerText']
+            return decodedString || text
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex]
+            // Questions may contain HTML entities (e.g., &quot;), we use DOMParser to decode
+            questionText['innerText'] = decodeHTMLEntities(currentQuestion.question)
+            questionCount['innerText'] = `Question ${currentQuestionIndex + 1} of ${questions.length}`
+        }
+
+        function resetStatusBar() {
+            statusBar.replaceChildren()
+        }
+
+        function updateStatusBar(isCorrect) {
+            const indicator = document.createElement('span')
+            indicator['classList'].add('px-2', 'py-1', 'rounded', 'shadow-sm')
+            if (isCorrect) {
+                indicator['classList'].add('bg-emerald-100', 'text-emerald-700')
+                indicator['innerText'] = `Q${currentQuestionIndex + 1}: Correct`
+            } else {
+                indicator['classList'].add('bg-rose-100', 'text-rose-700')
+                indicator['innerText'] = `Q${currentQuestionIndex + 1}: Wrong`
+            }
+            statusBar.append(indicator)
+        }
+
+        function handleButtonClick(event) {
+            let answer
+            if (event.currentTarget['id'] === 'true-btn') {
+                answer = 'True'
+            } else {
+                answer = 'False'
+            }
+            const currentQuestion = questions[currentQuestionIndex]
+            const isCorrect = answer === currentQuestion.correct_answer
+            
+            // Show feedback in status bar
+            if (isCorrect) {
+                score++
+                updateScore()
+            }
+            updateStatusBar(isCorrect)
+
+            // Move to the next question immediately or show results
+            currentQuestionIndex++
+            if (currentQuestionIndex < questions.length) {
+                showQuestion()
+            } else {
+                showResults()
+            }
+        }
+
+        function updateScore() {
+            scoreDisplay['innerText'] = `Score: ${score}`
+        }
+
+        function showResults() {
+            triviaArea['classList'].add('hidden')
+            resultArea['classList'].remove('hidden')
+            finalScore['innerText'] = `You scored ${score} out of ${questions.length}`
+        }
+
+        trueBtn.addEventListener('click', handleButtonClick)
+        falseBtn.addEventListener('click', handleButtonClick)
+        startBtn.addEventListener('click', fetchQuestions)
+    </script>
+</body>
+</html>

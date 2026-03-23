@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarot Card - Current Target</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-10">
+    <div id="tarot-card" class="w-[180px] h-[300px] rounded-xl shadow-lg transition-all duration-500">
+        <img src="img/tarot_the_fool.jpg" alt="The Fool">
+    </div>
+
+    <script>
+        function clickToRotate(event) {
+            event.currentTarget.classList.toggle('rotate-180')
+        }
+        const card = document.querySelector('#tarot-card')
+        card.addEventListener('click', clickToRotate)
+    </script>
+
+</body>
+</html>

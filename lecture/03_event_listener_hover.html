@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tarot Card Hover</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="m-6">
+
+    <div id="card-container" class="flex">
+        <img src="img/tarot_the_fool.jpg" class="w-[150px] h-[250px] rounded-[10px] shadow-lg" id="fool">
+        <img src="img/tarot_the_fool.jpg" class="w-[150px] h-[250px] rounded-[10px] shadow-lg rotate-180" id="fool-inverted">
+    </div>
+    <div id="meaning" class="text-xl"></div>
+
+    <script>
+        // Get references to elements
+        const fool = document.querySelector('#fool')
+        const foolInverted = document.querySelector('#fool-inverted')
+        const meaning = document.querySelector('#meaning')
+
+        // Meanings
+        const meanings = {
+            'fool': "The Fool: New Beginnings",
+            'fool-inverted': "The Fool (Inverted): Recklessness"
+        }
+
+        // Event listener function
+        function handleHover(event) {
+            meaning.innerText = meanings[event.currentTarget.id]
+        }
+        function handleLeave() {
+            meaning.innerText = ""
+        }
+
+        // Add event listeners to both cards
+        fool.addEventListener('mouseenter', handleHover)
+        fool.addEventListener('mouseleave', handleLeave)
+        foolInverted.addEventListener('mouseenter', handleHover)
+        foolInverted.addEventListener('mouseleave', handleLeave)
+    </script>
+
+</body>
+</html>
